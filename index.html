@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>E-Commerce Business Profit Margin Calculator</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;700&family=Poppins:wght@600&display=swap');
+        
+        body {
+            font-family: 'Open Sans', sans-serif;
+            background: #ffdcc7;
+            margin: 0;
+            padding: 10px;
+            min-height: 100vh;
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .container {
+            width: 100%;
+            max-width: 400px;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.2);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+            border-radius: 12px;
+            text-align: center;
+            animation: fadeIn 0.5s ease-in-out;
+            backdrop-filter: blur(15px);
+            box-sizing: border-box;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        input {
+            width: 100%;
+            padding: 14px;
+            margin: 10px 0;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 8px;
+            font-size: 16px;
+            background: rgba(255, 255, 255, 0.2);
+            color: black;
+            backdrop-filter: blur(10px);
+            box-sizing: border-box;
+            min-height: 50px;
+            -webkit-appearance: none;
+        }
+        input::placeholder {
+            color: rgba(0, 0, 0, 0.7);
+        }
+        input:focus {
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.4);
+            outline: none;
+        }
+        button {
+            width: 100%;
+            padding: 16px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            box-sizing: border-box;
+            min-height: 55px;
+            margin: 10px 0;
+        }
+        .calculate-btn {
+            background: #fc7500;
+            color: white;
+        }
+        .calculate-btn:hover {
+            background: #e96900;
+            transform: scale(1.02);
+        }
+        .reset-btn {
+            background: #f92814;
+            color: white;
+        }
+        .reset-btn:hover {
+            background: #e65b45;
+            transform: scale(1.02);
+        }
+        /* Profitability Details UI */
+        #profit-details {
+            margin: 10px 0 0 0;
+            background: rgba(255, 255, 255, 0.3);
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            display: none;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        #profit-details.visible {
+            display: block;
+            opacity: 1;
+        }
+        .profit-item {
+            margin: 12px 0;
+            font-family: 'Poppins', sans-serif;
+            font-size: 18px;
+            color: #333;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            opacity: 0;
+            transform: scale(0.95);
+            animation: popIn 0.4s ease forwards;
+        }
+        @keyframes popIn {
+            to { opacity: 1; transform: scale(1); }
+        }
+        .profit-item:nth-child(1) { animation-delay: 0.1s; }
+        .profit-item:nth-child(2) { animation-delay: 0.2s; }
+        .profit-item:nth-child(3) { animation-delay: 0.3s; }
+        .profit-label {
+            font-weight: 500;
+        }
+        .profit-value {
+            font-weight: 600;
+            color: #5f8f3d;
+            min-width: 100px;
+            text-align: right;
+        }
+        /* Progress Bar */
+        .progress-container {
+            margin-top: 15px;
+            opacity: 0;
+            animation: popIn 0.4s ease forwards 0.4s;
+        }
+        .progress-label {
+            font-size: 14px;
+            color: #555;
+            margin-bottom: 5px;
+            text-align: left;
+        }
+        .progress-bar {
+            width: 100%;
+            height: 12px;
+            background: #e0e0e0;
+            border-radius: 6px;
+            overflow: hidden;
+            position: relative;
+        }
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #5f8f3d, #8abf5e);
+            width: 0%;
+            transition: width 1.2s ease-in-out;
+            border-radius: 6px;
+        }
+        .footer {
+            margin-top: 15px;
+            font-size: 14px;
+            color: black;
+            padding-top: 10px;
+            border-top: 1px solid rgba(0, 0, 0, 0.1);
+        }
+        h3 {
+            color: black;
+            font-size: 22px;
+            margin: 10px 0;
+        }
+        @media (max-width: 480px) {
+            body { padding: 8px; }
+            .container {
+                width: 100%;
+                padding: 12px;
+                box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+                border-radius: 10px;
+            }
+            input {
+                font-size: 16px;
+                padding: 12px;
+                margin: 8px 0;
+                min-height: 52px;
+            }
+            button {
+                font-size: 16px;
+                padding: 14px;
+                min-height: 56px;
+                margin: 8px 0;
+            }
+            h3 {
+                font-size: 20px;
+                margin: 8px 0;
+            }
+            #profit-details {
+                padding: 12px;
+                margin: 8px 0 0 0;
+            }
+            .profit-item {
+                font-size: 16px;
+                margin: 10px 0;
+            }
+            .profit-value { min-width: 80px; }
+            .progress-bar { height: 10px; }
+            .footer {
+                font-size: 12px;
+                margin-top: 12px;
+                padding-top: 8px;
+            }
+        }
+        @media (max-width: 360px) {
+            input, button { font-size: 14px; }
+            h3 { font-size: 18px; }
+            .profit-item { font-size: 14px; }
+            .profit-value { min-width: 70px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h3>E-Commerce Business Profit Margin Calculator</h3>
+        <input type="number" id="costPrice" placeholder="Cost Price ($)" />
+        <input type="number" id="shippingCost" placeholder="Shipping Cost ($)" />
+        <input type="number" id="sellingPrice" placeholder="Selling Price ($)" />
+        <input type="number" id="adsSpend" placeholder="Ads Spend ($)" />
+        <input type="number" id="platformFee" placeholder="Platform Fee ($)" />
+        <input type="number" id="packagingCost" placeholder="Packaging Cost ($)" />
+        <input type="number" id="miscFee" placeholder="Misc Fee ($)" />
+        <button class="calculate-btn" onclick="calculateProfit()">Calculate Profit</button>
+        <button class="reset-btn" onclick="resetCalculator()">Reset</button>
+        <div id="profit-details">
+            <div class="profit-item">
+                <span class="profit-label">Total Cost:</span>
+                <span class="profit-value" id="total-cost">$0.00</span>
+            </div>
+            <div class="profit-item">
+                <span class="profit-label">Profit:</span>
+                <span class="profit-value" id="profit">$0.00</span>
+            </div>
+            <div class="profit-item">
+                <span class="profit-label">Profit Margin:</span>
+                <span class="profit-value" id="profit-margin">0.00%</span>
+            </div>
+            <div class="progress-container">
+                <div class="progress-label">Profitability</div>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progress-fill"></div>
+                </div>
+            </div>
+        </div>
+        <div class="footer">
+            Developed By Bilal-Hussain ©2025
+        </div>
+    </div>
+    
+    <script>
+        function animateValue(element, start, end, duration, suffix = '') {
+            let startTimestamp = null;
+            const step = (timestamp) => {
+                if (!startTimestamp) startTimestamp = timestamp;
+                const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+                const value = start + (end - start) * progress;
+                element.textContent = `${suffix}${value.toFixed(2)}${suffix === '$' ? '' : '%'}`;
+                if (progress < 1) {
+                    requestAnimationFrame(step);
+                }
+            };
+            requestAnimationFrame(step);
+        }
+
+        function calculateProfit() {
+            let costPrice = parseFloat(document.getElementById('costPrice').value) || 0;
+            let shippingCost = parseFloat(document.getElementById('shippingCost').value) || 0;
+            let miscFee = parseFloat(document.getElementById('miscFee').value) || 0;
+            let sellingPrice = parseFloat(document.getElementById('sellingPrice').value) || 0;
+            let adsSpend = parseFloat(document.getElementById('adsSpend').value) || 0;
+            let platformFee = parseFloat(document.getElementById('platformFee').value) || 0;
+            let packagingCost = parseFloat(document.getElementById('packagingCost').value) || 0;
+            
+            let totalCost = costPrice + shippingCost + adsSpend + platformFee + packagingCost + miscFee;
+            let profit = sellingPrice - totalCost;
+            let profitMargin = (sellingPrice > 0) ? (profit / sellingPrice) * 100 : 0;
+
+            // Show details
+            let profitDetails = document.getElementById('profit-details');
+            profitDetails.classList.add('visible');
+
+            // Animate values from 0 to calculated values
+            animateValue(document.getElementById('total-cost'), 0, totalCost, 1200, '$');
+            animateValue(document.getElementById('profit'), 0, profit, 1200, '$');
+            animateValue(document.getElementById('profit-margin'), 0, profitMargin, 1200, '');
+
+            // Animate progress bar
+            let progressPercentage = Math.min(Math.max(profitMargin, 0), 100); // Cap at 100% for visual
+            document.getElementById('progress-fill').style.width = `${progressPercentage}%`;
+        }
+        
+        function resetCalculator() {
+            document.getElementById('costPrice').value = '';
+            document.getElementById('shippingCost').value = '';
+            document.getElementById('miscFee').value = '';
+            document.getElementById('sellingPrice').value = '';
+            document.getElementById('adsSpend').value = '';
+            document.getElementById('platformFee').value = '';
+            document.getElementById('packagingCost').value = '';
+            
+            // Reset profitability details
+            document.getElementById('total-cost').textContent = '$0.00';
+            document.getElementById('profit').textContent = '$0.00';
+            document.getElementById('profit-margin').textContent = '0.00%';
+            document.getElementById('progress-fill').style.width = '0%';
+            
+            // Hide details
+            let profitDetails = document.getElementById('profit-details');
+            profitDetails.classList.remove('visible');
+        }
+    </script>
+</body>
+</html>
